@@ -18,7 +18,7 @@ GLOBAL_LIST_INIT(atmos_components, typecacheof(list(/obj/machinery/atmospherics)
 	var/bitfield = NONE
 	var/bits = 0
 	connections = 0
-	connection_num = 0
+	connection_num = NONE
 	for(var/i in 1 to device_type)
 		if(!nodes[i])
 			continue
