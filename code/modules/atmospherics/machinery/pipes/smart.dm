@@ -13,16 +13,16 @@ GLOBAL_LIST_INIT(atmos_components, typecacheof(list(/obj/machinery/atmospherics)
 	connection_num = 0
 	var/list/connections
 
-/obj/machinery/atmospherics/pipe/smart/proc/check_connections(connections, connection_num)
-	switch(connection_num)
+/obj/machinery/atmospherics/pipe/smart/proc/check_connections(connected, connection_number)
+	switch(connection_number)
 		if(0)
 			dir = 2
 		if(1)
-			dir = connections
+			dir = connected
 		if(2)
-			dir = check_binary_direction(connections)
+			dir = check_binary_direction(connected)
 		if(3)
-			dir = connections
+			dir = connected
 		if(4)
 			dir = 15
 
@@ -30,12 +30,15 @@ GLOBAL_LIST_INIT(atmos_components, typecacheof(list(/obj/machinery/atmospherics)
 	icon = 'icons/obj/atmospherics/pipes/pipes_bitmask.dmi'
 	var/bitfield = NONE
 	var/bits = 0
+	connections = 0
+	connection_num = 0
 	for(var/i in 1 to device_type)
 		if(!nodes[i])
 			continue
 		var/obj/machinery/atmospherics/node = nodes[i]
 		var/connected_dir = get_dir(src, node)
 		connections |= connected_dir
+		connection_num += 1
 		bits++
 		switch(connected_dir)
 			if(NORTH)
