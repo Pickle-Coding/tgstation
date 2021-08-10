@@ -13,19 +13,7 @@ GLOBAL_LIST_INIT(atmos_components, typecacheof(list(/obj/machinery/atmospherics)
 	connection_num = 0
 	var/list/connections
 
-/obj/machinery/atmospherics/pipe/smart/proc/check_connections()
-	connection_num = 0
-	connections = NONE
-	for(var/direction in GLOB.cardinals)
-		var/turf/turf = get_step(src, direction)
-		if(!turf)
-			continue
-		for(var/obj/machinery/atmospherics/machine in turf)
-			if(connection_check(machine, piping_layer))
-				connections |= direction
-				connection_num++
-				break
-
+/obj/machinery/atmospherics/pipe/smart/proc/check_connections(connections, connection_num)
 	switch(connection_num)
 		if(0)
 			dir = 2
@@ -47,6 +35,7 @@ GLOBAL_LIST_INIT(atmos_components, typecacheof(list(/obj/machinery/atmospherics)
 			continue
 		var/obj/machinery/atmospherics/node = nodes[i]
 		var/connected_dir = get_dir(src, node)
+		connections |= connected_dir
 		bits++
 		switch(connected_dir)
 			if(NORTH)
@@ -82,7 +71,7 @@ GLOBAL_LIST_INIT(atmos_components, typecacheof(list(/obj/machinery/atmospherics)
 					bitfield |= WEST_SHORTPIPE
 
 	icon_state = "[bitfield]_[piping_layer]"
-	check_connections()
+	check_connections(connections, connection_num)
 
 /obj/machinery/atmospherics/pipe/smart/SetInitDirections(init_dir)
 	if(init_dir)
