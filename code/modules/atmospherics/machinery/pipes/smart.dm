@@ -10,7 +10,7 @@ GLOBAL_LIST_INIT(atmos_components, typecacheof(list(/obj/machinery/atmospherics)
 	device_type = QUATERNARY
 	construction_type = /obj/item/pipe/quaternary
 	pipe_state = "manifold4w"
-	var/connection_num
+	connection_num = 0
 	var/list/connections
 
 /obj/machinery/atmospherics/pipe/smart/update_pipe_icon()
