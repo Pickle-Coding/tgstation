@@ -216,7 +216,7 @@
 	for(var/gas_id in oxi_gases)
 		oxi_comp[gas_id] = clamp(our_mix.gases[gas_id][MOLES] / oxi_moles, 0, 1) //Composition of oxi gases.
 	for(var/gas_id in combined_gases)
-		gas_comp[gas_id] = clamp(our_mix.gases[gas_id][MOLES] / oxi_moles, 0, 1) //Composition of gases.
+		gas_comp[gas_id] = clamp(our_mix.gases[gas_id][MOLES] / combined_moles, 0, 1) //Composition of gases.
 	for(var/gas_id in gas_modifiers)
 		for(var/i = 1 to 7)
 			explosion_modifier[i] += gas_modifiers[gas_id][i] * gas_comp[gas_id] //Calculate modifiers.
@@ -231,7 +231,7 @@
 	our_mix.garbage_collect()
 	var/datum/gas_mixture/bomb_mixture = our_mix.copy()
 	var/gas_efficiency = oxi_gas_comp ** oxi_weight * fuel_gas_comp ** fuel_weight * ((oxi_weight + fuel_weight) ** (oxi_weight + fuel_weight)) / (oxi_weight ** oxi_weight * fuel_weight ** fuel_weight) * bomb_mixture.temperature / (bomb_mixture.temperature + (bomb_mixture.temperature * sqrt(INVERSE(explosion_modifier[7])) - sqrt(explosion_modifier[7])) ** 2)
-	var/strength = gas_efficiency * explosion_modifier[1] * combined_moles * bomb_mixture.temperature / 4000
+	var/strength = gas_efficiency * explosion_modifier[1] * combined_moles * bomb_mixture.temperature / 5000
 	var/turf/ground_zero = get_turf(loc)
 
 	if(strength >= 0.2)
