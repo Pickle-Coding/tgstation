@@ -166,8 +166,8 @@
 	///The modifiers of the gases. [1: base modifier, 2: devastation, 3: high_impact, 4: low_impact, 5: flash, 6: weight, 7: effective temperature].
 	var/list/gas_modifiers = list(
 		/datum/gas/oxygen = list(1, 0.1, 0.2, 1.5, 1.5, 1, T0C),
-		/datum/gas/nitrous_oxide = list(0.9, 1.2, 1, 0.4, 0.4, 2, 3 * T0C)
-		/datum/gas/nitryl = list(2, 0.1, 0.125, 0.15, 0.175, 0.5, 4 * TCMB)
+		/datum/gas/nitrous_oxide = list(0.9, 1.2, 1, 0.4, 0.4, 2, 3 * T0C),
+		/datum/gas/nitryl = list(2, 0.1, 0.125, 0.15, 0.175, 0.5, 4 * TCMB),
 		/datum/gas/plasma = list(0.6, 1.2, 1, 0.9, 0.9, 1, T0C + 100),
 		/datum/gas/hydrogen = list(0.9, 0.75, 0.75, 2, 2, 0.1, 8 * TCMB),
 		/datum/gas/tritium = list(1, 1, 1, 1, 1, 0.12, 4 * TCMB),
@@ -198,7 +198,7 @@
 	)
 	var/datum/gas_mixture/our_mix = return_air()
 	var/explosion_modifier = list(0, 0, 0, 0, 0, 0, 0)
-	for(var/gas_id in fuel_gases)
+	for(var/gas_id in combined_gases)
 		our_mix.assert_gas(gas_id)
 
 	var/fuel_moles = 0
@@ -209,7 +209,7 @@
 	for(var/gas_id in oxi_gases)
 		oxi_moles += our_mix.gases[gas_id][MOLES]
 	combined_moles = fuel_moles + oxi_moles
-	if(fuel_moles | oxi_moles == 0)
+	if(fuel_moles == 0 || oxi_moles == 0)
 		return
 	for(var/gas_id in fuel_gases)
 		fuel_comp[gas_id] = clamp(our_mix.gases[gas_id][MOLES] / fuel_moles, 0, 1) //Composition of fuels.
@@ -231,11 +231,11 @@
 	our_mix.garbage_collect()
 	var/datum/gas_mixture/bomb_mixture = our_mix.copy()
 	var/gas_efficiency = oxi_gas_comp ** oxi_weight * fuel_gas_comp ** fuel_weight * ((oxi_weight + fuel_weight) ** (oxi_weight + fuel_weight)) / (oxi_weight ** oxi_weight * fuel_weight ** fuel_weight) * bomb_mixture.temperature / (bomb_mixture.temperature + (bomb_mixture.temperature * sqrt(INVERSE(explosion_modifier[7])) - sqrt(explosion_modifier[7])) ** 2)
-	var/strength = gas_efficiency * explosion_modifier[1] * combined_moles * bomb_mixture.temperature / 100
+	var/strength = gas_efficiency * explosion_modifier[1] * combined_moles * bomb_mixture.temperature / 4000
 	var/turf/ground_zero = get_turf(loc)
 
 	if(strength >= 0.2)
-		explosion(ground_zero, devastation_range = round(sqrt(strength * explosion_modifier[1]), 1), heavy_impact_range = round(sqrt(strength * explosion_modifier[2]) * 2, 1), light_impact_range = round(sqrt(strength * explosion_modifier[3]) * 4, 1), flash_range = round(sqrt(strength * explosion_modifier[4]) * 8, 1), ignorecap = TRUE, explosion_cause = src)
+		explosion(ground_zero, devastation_range = round(sqrt(strength * explosion_modifier[1]), 1), heavy_impact_range = round(sqrt(strength * explosion_modifier[2]) * 2, 1), light_impact_range = round(sqrt(strength * explosion_modifier[3]) * 4, 1), flash_range = round(sqrt(strength * explosion_modifier[4]) * 8, 1), ignorecap = TRUE)
 	else
 		ground_zero.assume_air(bomb_mixture)
 		ground_zero.hotspot_expose(1000, 125)
