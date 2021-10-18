@@ -163,14 +163,16 @@
 		/datum/gas/nitrous_oxide,
 		/datum/gas/nitryl,
 	)
+	//Base modifier multiplies the strength. Devastation, high_impact, low_impact, and flash multiply their respective impact ranges in the explosion. Weight determines what the most efficient oxi to fuel ratio would be. The weight applies for oxi or fuel depending on the gas. Effective temperature determines what would be the most efficient temperature for the gas.
+	//Do not set the value for weight too high, as a variable will be used by a calculation that can generate really massive numbers. Check gas_efficiency to see what values would be appropriate.
 	///The modifiers of the gases. [1: base modifier, 2: devastation, 3: high_impact, 4: low_impact, 5: flash, 6: weight, 7: effective temperature].
 	var/list/gas_modifiers = list(
 		/datum/gas/oxygen = list(1, 0.1, 0.2, 1.5, 1.5, 2, T0C),
 		/datum/gas/nitrous_oxide = list(0.9, 1.2, 1, 0.4, 0.4, 4, 3 * T0C),
 		/datum/gas/nitryl = list(2, 0.1, 0.125, 0.15, 0.175, 1, 4 * TCMB),
 		/datum/gas/plasma = list(0.6, 1.2, 1, 0.9, 0.9, 1, T0C + 100),
-		/datum/gas/hydrogen = list(0.9, 3.75, 3.75, 10, 10, 0.1, 8 * TCMB),
-		/datum/gas/tritium = list(1, 5, 5, 5, 5, 0.12, 4 * TCMB),
+		/datum/gas/hydrogen = list(0.9, 7.5, 7.5, 20, 20, 0.2, 8 * TCMB),
+		/datum/gas/tritium = list(1, 10, 10, 10, 10, 0.24, 4 * TCMB),
 		/datum/gas/antinoblium = list(1.2, 8, 0, 0, 0, 8, TCMB),
 	)
 	///The composition of gases relative to oxi.
@@ -197,12 +199,16 @@
 		/datum/gas/antinoblium = 0,
 	)
 	var/datum/gas_mixture/our_mix = return_air()
+	///The modifier of the explosion. [1: base modifier, 2: devastation, 3: high_impact, 4: low_impact, 5: flash, 6: weight, 7: effective temperature].
 	var/explosion_modifier = list(0, 0, 0, 0, 0, 0, 0)
 	for(var/gas_id in combined_gases)
 		our_mix.assert_gas(gas_id)
 
+	///Total moles of fuel.
 	var/fuel_moles = 0
+	///Total moles of oxi.
 	var/oxi_moles = 0
+	///Total moles of fuel and oxi.
 	var/combined_moles = 0
 	for(var/gas_id in fuel_gases)
 		fuel_moles += our_mix.gases[gas_id][MOLES]
@@ -220,9 +226,13 @@
 	for(var/gas_id in gas_modifiers)
 		for(var/i = 1 to 7)
 			explosion_modifier[i] += gas_modifiers[gas_id][i] * gas_comp[gas_id] //Calculate modifiers.
+	///Composition of oxi.
 	var/oxi_gas_comp = oxi_moles / combined_moles
+	///Composition of fuel.
 	var/fuel_gas_comp = fuel_moles / combined_moles
+	///Weight of oxi.
 	var/oxi_weight = 0
+	///Weight of fuel.
 	var/fuel_weight = 0
 	for(var/gas_id in oxi_gases)
 		oxi_weight += gas_modifiers[gas_id][6] * oxi_comp[gas_id]
@@ -230,8 +240,11 @@
 		fuel_weight += gas_modifiers[gas_id][6] * fuel_comp[gas_id]
 	our_mix.garbage_collect()
 	var/datum/gas_mixture/bomb_mixture = our_mix.copy()
+	///Efficiency of reaction. Maximum possible efficiency is 1. Temperature or oxi/fuel compositions going off their target will lower this.
 	var/gas_efficiency = oxi_gas_comp ** oxi_weight * fuel_gas_comp ** fuel_weight * ((oxi_weight + fuel_weight) ** (oxi_weight + fuel_weight)) / (oxi_weight ** oxi_weight * fuel_weight ** fuel_weight) * bomb_mixture.temperature / (bomb_mixture.temperature + (bomb_mixture.temperature * sqrt(INVERSE(explosion_modifier[7])) - sqrt(explosion_modifier[7])) ** 2)
+	///Increases range of the explosion.
 	var/strength = gas_efficiency * explosion_modifier[1] * combined_moles * bomb_mixture.temperature / 5000
+	///Location of explosion.
 	var/turf/ground_zero = get_turf(loc)
 
 	if(strength >= 0.2)
