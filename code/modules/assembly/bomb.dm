@@ -165,13 +165,13 @@
 	)
 	///The modifiers of the gases. [1: base modifier, 2: devastation, 3: high_impact, 4: low_impact, 5: flash, 6: weight, 7: effective temperature].
 	var/list/gas_modifiers = list(
-		/datum/gas/oxygen = list(1, 0.1, 0.2, 1.5, 1.5, 1, T0C),
-		/datum/gas/nitrous_oxide = list(0.9, 1.2, 1, 0.4, 0.4, 2, 3 * T0C),
-		/datum/gas/nitryl = list(2, 0.1, 0.125, 0.15, 0.175, 0.5, 4 * TCMB),
+		/datum/gas/oxygen = list(1, 0.1, 0.2, 1.5, 1.5, 2, T0C),
+		/datum/gas/nitrous_oxide = list(0.9, 1.2, 1, 0.4, 0.4, 4, 3 * T0C),
+		/datum/gas/nitryl = list(2, 0.1, 0.125, 0.15, 0.175, 1, 4 * TCMB),
 		/datum/gas/plasma = list(0.6, 1.2, 1, 0.9, 0.9, 1, T0C + 100),
-		/datum/gas/hydrogen = list(0.9, 0.75, 0.75, 2, 2, 0.1, 8 * TCMB),
-		/datum/gas/tritium = list(1, 1, 1, 1, 1, 0.12, 4 * TCMB),
-		/datum/gas/antinoblium = list(1.2, 4, 0, 0, 0, 8, TCMB),
+		/datum/gas/hydrogen = list(0.9, 3.75, 3.75, 10, 10, 0.1, 8 * TCMB),
+		/datum/gas/tritium = list(1, 5, 5, 5, 5, 0.12, 4 * TCMB),
+		/datum/gas/antinoblium = list(1.2, 8, 0, 0, 0, 8, TCMB),
 	)
 	///The composition of gases relative to oxi.
 	var/list/oxi_comp = list(
@@ -235,7 +235,7 @@
 	var/turf/ground_zero = get_turf(loc)
 
 	if(strength >= 0.2)
-		explosion(ground_zero, devastation_range = round(sqrt(strength * explosion_modifier[1]), 1), heavy_impact_range = round(sqrt(strength * explosion_modifier[2]) * 2, 1), light_impact_range = round(sqrt(strength * explosion_modifier[3]) * 4, 1), flash_range = round(sqrt(strength * explosion_modifier[4]) * 8, 1), ignorecap = TRUE, explosion_cause = src)
+		explosion(ground_zero, devastation_range = round(sqrt(strength * explosion_modifier[2]), 1), heavy_impact_range = round(sqrt(strength * explosion_modifier[3]) * 2, 1), light_impact_range = round(sqrt(strength * explosion_modifier[4]) * 4, 1), flash_range = round(sqrt(strength * explosion_modifier[5]) * 8, 1), ignorecap = TRUE, explosion_cause = src)
 	else
 		ground_zero.assume_air(bomb_mixture)
 		ground_zero.hotspot_expose(1000, 125)
