@@ -235,7 +235,7 @@
 	var/turf/ground_zero = get_turf(loc)
 
 	if(strength >= 0.2)
-		explosion(ground_zero, devastation_range = round(sqrt(strength * explosion_modifier[1]), 1), heavy_impact_range = round(sqrt(strength * explosion_modifier[2]) * 2, 1), light_impact_range = round(sqrt(strength * explosion_modifier[3]) * 4, 1), flash_range = round(sqrt(strength * explosion_modifier[4]) * 8, 1), ignorecap = TRUE)
+		explosion(ground_zero, devastation_range = round(sqrt(strength * explosion_modifier[1]), 1), heavy_impact_range = round(sqrt(strength * explosion_modifier[2]) * 2, 1), light_impact_range = round(sqrt(strength * explosion_modifier[3]) * 4, 1), flash_range = round(sqrt(strength * explosion_modifier[4]) * 8, 1), ignorecap = TRUE, explosion_cause = src)
 	else
 		ground_zero.assume_air(bomb_mixture)
 		ground_zero.hotspot_expose(1000, 125)
