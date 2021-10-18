@@ -231,11 +231,11 @@
 	our_mix.garbage_collect()
 	var/datum/gas_mixture/bomb_mixture = our_mix.copy()
 	var/gas_efficiency = oxi_gas_comp ** oxi_weight * fuel_gas_comp ** fuel_weight * ((oxi_weight + fuel_weight) ** (oxi_weight + fuel_weight)) / (oxi_weight ** oxi_weight * fuel_weight ** fuel_weight) * bomb_mixture.temperature / (bomb_mixture.temperature + (bomb_mixture.temperature * sqrt(INVERSE(explosion_modifier[7])) - sqrt(explosion_modifier[7])) ** 2)
-	var/strength = gas_efficiency * explosion_modifier[1] * combined_moles * bomb_mixture.temperature / 10000
+	var/strength = gas_efficiency * explosion_modifier[1] * combined_moles * bomb_mixture.temperature / 100
 	var/turf/ground_zero = get_turf(loc)
 
 	if(strength >= 0.2)
-		explosion(ground_zero, devastation_range = round(strength * explosion_modifier[1], 1), heavy_impact_range = round(strength * 2 * explosion_modifier[2], 1), light_impact_range = round(strength * 4 * explosion_modifier[3], 1), flash_range = round(strength * 6 * explosion_modifier[4], 1), ignorecap = TRUE, explosion_cause = src)
+		explosion(ground_zero, devastation_range = round(sqrt(strength * explosion_modifier[1]), 1), heavy_impact_range = round(sqrt(strength * explosion_modifier[2]) * 2, 1), light_impact_range = round(sqrt(strength * explosion_modifier[3]) * 4, 1), flash_range = round(sqrt(strength * explosion_modifier[4]) * 8, 1), ignorecap = TRUE, explosion_cause = src)
 	else
 		ground_zero.assume_air(bomb_mixture)
 		ground_zero.hotspot_expose(1000, 125)
