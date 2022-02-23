@@ -613,7 +613,7 @@
 		var/copy_amount = reagent.volume * part
 		if(preserve_data)
 			trans_data = reagent.data
-		R.add_reagent(reagent.type, copy_amount * multiplier, trans_data, added_purity = reagent.purity, added_ph = reagent.ph, no_react = TRUE, ignore_splitting = reagent.chemical_flags & REAGENT_DONOTSPLIT)
+		R.add_reagent(reagent.type, copy_amount * multiplier, trans_data, reagtemp = chem_temp, added_purity = reagent.purity, added_ph = reagent.ph, no_react = TRUE, ignore_splitting = reagent.chemical_flags & REAGENT_DONOTSPLIT)
 
 	//pass over previous ongoing reactions before handle_reactions is called
 	transfer_reactions(R)
@@ -1225,8 +1225,7 @@
 	var/list/reagents = list()
 	for(var/datum/reagent/reagent as anything in cached_reagents)
 		reagents[reagent] = reagent.volume * volume_modifier
-	if(isopenturf(A))
-		exchange_heat(A)
+	exchange_heat(A)
 
 	return A.expose_reagents(reagents, src, methods, volume_modifier, show_message)
 
@@ -1240,19 +1239,23 @@
 		R = get_reagent(R)
 	if(isnull(R))
 		return null
-	if(isopenturf(A))
-		exchange_heat(A)
+	exchange_heat(A)
 
 	// Yes, we need the parentheses.
 	return A.expose_reagents(list((R) = R.volume * volume_modifier), src, methods, volume_modifier, show_message)
 
 /// Exchanges heat with air. Conductivity ranging from 0 to 1.
-/datum/reagents/proc/exchange_heat(var/turf/open/exposed_open_turf, var/conductivity = 1)
-	var/delta = chem_temp - exposed_open_turf.air.temperature
-	var/heat_exchanged = conductivity * delta * (heat_capacity() * exposed_open_turf.air.heat_capacity()) / (heat_capacity() + exposed_open_turf.air.heat_capacity())
-	exposed_open_turf.air.temperature = max(exposed_open_turf.air.temperature + heat_exchanged / exposed_open_turf.air.heat_capacity())
-	adjust_thermal_energy(heat_exchanged * -1, TCMB, FUSION_MAXIMUM_TEMPERATURE)
-
+/datum/reagents/proc/exchange_heat(var/turf/exposed_turf, var/conductivity = 1)
+	if(isopenturf(exposed_turf))
+		var/turf/open/exposed_open_turf = exposed_turf
+		var/delta = chem_temp - exposed_open_turf.air.temperature
+		var/heat_exchanged = conductivity * delta * (heat_capacity() * exposed_open_turf.air.heat_capacity()) / (heat_capacity() + exposed_open_turf.air.heat_capacity())
+		exposed_open_turf.air.temperature = max(exposed_open_turf.air.temperature + heat_exchanged / exposed_open_turf.air.heat_capacity())
+		adjust_thermal_energy(heat_exchanged * -1, TCMB, FUSION_MAXIMUM_TEMPERATURE)
+		exposed_open_turf.air_update_turf(FALSE, FALSE)
+		return TRUE
+	else
+		return FALSE
 /// Is this holder full or not
 /datum/reagents/proc/holder_full()
 	if(total_volume >= maximum_volume)

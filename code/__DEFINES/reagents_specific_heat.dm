@@ -6,4 +6,4 @@
 
 #define SPECIFIC_HEAT_PLASMA 5000
 
-#define SPECIFIC_HEAT_FIREFIGHTING_FOAM 100000 // It's meant to stop thermonuclear fires from spreading in an engine, so it should absorb a lot of energy.
+#define SPECIFIC_HEAT_FIREFIGHTING_FOAM 10000 // Very good for cooling fires.
