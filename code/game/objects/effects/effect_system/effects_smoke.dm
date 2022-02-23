@@ -93,6 +93,8 @@
 			if(opaque)
 				S.set_opacity(TRUE)
 			newsmokes.Add(S)
+		if(isopenturf(T))
+			reagents.exchange_heat(T)
 
 	//the smoke spreads rapidly but not instantly
 	for(var/obj/effect/particle_effect/smoke/SM in newsmokes)

@@ -103,7 +103,7 @@
 	/// The atom this holder is attached to
 	var/atom/my_atom = null
 	/// Current temp of the holder volume
-	var/chem_temp = 150
+	var/chem_temp = T20C
 	///pH of the whole system
 	var/ph = CHEMICAL_NORMAL_PH
 	/// unused
@@ -1225,6 +1225,8 @@
 	var/list/reagents = list()
 	for(var/datum/reagent/reagent as anything in cached_reagents)
 		reagents[reagent] = reagent.volume * volume_modifier
+	if(isopenturf(A))
+		exchange_heat(A)
 
 	return A.expose_reagents(reagents, src, methods, volume_modifier, show_message)
 
@@ -1238,9 +1240,18 @@
 		R = get_reagent(R)
 	if(isnull(R))
 		return null
+	if(isopenturf(A))
+		exchange_heat(A)
 
 	// Yes, we need the parentheses.
 	return A.expose_reagents(list((R) = R.volume * volume_modifier), src, methods, volume_modifier, show_message)
+
+/// Exchanges heat with air. Conductivity ranging from 0 to 1.
+/datum/reagents/proc/exchange_heat(var/turf/open/exposed_open_turf, var/conductivity = 1)
+	var/delta = chem_temp - exposed_open_turf.air.temperature
+	var/heat_exchanged = conductivity * delta * (heat_capacity() * exposed_open_turf.air.heat_capacity()) / (heat_capacity() + exposed_open_turf.air.heat_capacity())
+	exposed_open_turf.air.temperature = max(exposed_open_turf.air.temperature + heat_exchanged / exposed_open_turf.air.heat_capacity())
+	adjust_thermal_energy(heat_exchanged * -1, TCMB, FUSION_MAXIMUM_TEMPERATURE)
 
 /// Is this holder full or not
 /datum/reagents/proc/holder_full()

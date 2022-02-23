@@ -365,6 +365,7 @@
 	color = "#A6FAFF55"
 	taste_description = "the inside of a fire extinguisher"
 	chemical_flags = REAGENT_CAN_BE_SYNTHESIZED
+	specific_heat = SPECIFIC_HEAT_FIREFIGHTING_FOAM
 
 /datum/reagent/firefighting_foam/expose_turf(turf/open/exposed_turf, reac_volume)
 	. = ..()
@@ -381,8 +382,6 @@
 	var/obj/effect/hotspot/hotspot = (locate(/obj/effect/hotspot) in exposed_turf)
 	if(hotspot && !isspaceturf(exposed_turf) && exposed_turf.air)
 		var/datum/gas_mixture/air = exposed_turf.air
-		if(air.temperature > T20C)
-			air.temperature = max(air.temperature/2,T20C)
 		air.react(src)
 		qdel(hotspot)
 

@@ -17,7 +17,7 @@
 	attack_verb_simple = list("slam", "whack", "bash", "thunk", "batter", "bludgeon", "thrash")
 	dog_fashion = /datum/dog_fashion/back
 	resistance_flags = FIRE_PROOF
-	var/max_water = 50
+	var/max_water = 200
 	var/last_use = 1
 	var/chem = /datum/reagent/water
 	var/safety = TRUE
@@ -42,7 +42,7 @@
 	w_class = WEIGHT_CLASS_SMALL
 	force = 3
 	custom_materials = list(/datum/material/iron = 50, /datum/material/glass = 40)
-	max_water = 30
+	max_water = 120
 	sprite_name = "miniFE"
 	dog_fashion = null
 
@@ -58,7 +58,7 @@
 	w_class = WEIGHT_CLASS_SMALL
 	force = 3
 	custom_materials = list(/datum/material/iron = 50, /datum/material/glass = 40)
-	max_water = 30
+	max_water = 120
 	sprite_name = "coolant"
 	dog_fashion = null
 	cooling_power = 1.5
@@ -205,10 +205,10 @@
 			// If precise, remove turf from targets so it won't be picked more than once
 			if(precision)
 				the_targets -= my_target
-			var/datum/reagents/water_reagents = new /datum/reagents(5)
+			var/datum/reagents/water_reagents = new /datum/reagents(20)
 			water.reagents = water_reagents
 			water_reagents.my_atom = water
-			reagents.trans_to(water, 1, transfered_by = user)
+			reagents.trans_to(water, 4, transfered_by = user)
 
 		//Make em move dat ass, hun
 		move_particles(water_particles)

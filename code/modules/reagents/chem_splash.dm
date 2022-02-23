@@ -116,6 +116,8 @@
 			reactable |= A
 		if(chem_temp >= 300)
 			T.hotspot_expose(chem_temp*2, 5)
+		if(isopenturf(T))
+			source.exchange_heat(T)
 	if(!reactable.len) //Nothing to react with. Probably means we're in nullspace.
 		return
 	for(var/thing in reactable)
