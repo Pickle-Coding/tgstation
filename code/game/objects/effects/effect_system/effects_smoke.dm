@@ -344,7 +344,7 @@
 	smoke.start()
 
 /////////////////////////////////////////////
-// Bad Smoke (But Green)
+// Bad Smoke (But Green (and Black))
 /////////////////////////////////////////////
 
 /obj/effect/particle_effect/smoke/bad/green
@@ -354,6 +354,14 @@
 
 /datum/effect_system/smoke_spread/bad/green
 	effect_type = /obj/effect/particle_effect/smoke/bad/green
+
+/obj/effect/particle_effect/smoke/bad/black
+	name = "black smoke"
+	color = "#383838"
+	opaque = FALSE
+
+/datum/effect_system/smoke_spread/bad/black
+	effect_type = /obj/effect/particle_effect/smoke/bad/black
 
 /////////////////////////////////////////////
 // Quick smoke
