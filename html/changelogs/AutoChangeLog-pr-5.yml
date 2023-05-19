@@ -1,0 +1,6 @@
+author: "Pickle-Coding"
+delete-after: True
+changes:
+  - balance: "Engineering, janitorial and medical holosign projector projection time reduced to 0.6 seconds."
+  - balance: "Engineering and medical holosign projector max capacity increased to 12."
+  - balance: "Engineering, janitorial and medical holobarrier integrity reduced to 1."
