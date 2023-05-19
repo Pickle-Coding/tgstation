@@ -84,7 +84,6 @@
 	desc = "When it says walk it means walk."
 	icon = 'icons/effects/effects.dmi'
 	icon_state = "holosign"
-	max_integrity = 1
 
 /obj/structure/holosign/barrier/wetsign/CanAllowThrough(atom/movable/mover, border_dir)
 	. = ..()
@@ -98,7 +97,6 @@
 /obj/structure/holosign/barrier/engineering
 	icon_state = "holosign_engi"
 	rad_insulation = RAD_LIGHT_INSULATION
-	max_integrity = 1
 
 /obj/structure/holosign/barrier/atmos
 	name = "holofirelock"
@@ -152,7 +150,6 @@
 	desc = "A holobarrier that uses biometrics to detect human viruses. Denies passing to personnel with easily-detected, malicious viruses. Good for quarantines."
 	icon_state = "holo_medical"
 	alpha = 125 //lazy :)
-	max_integrity = 1
 	var/force_allaccess = FALSE
 	var/buzzcd = 0
 
