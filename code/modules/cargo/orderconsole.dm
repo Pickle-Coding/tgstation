@@ -62,12 +62,13 @@
 	else
 		return ..()
 
-/obj/machinery/computer/cargo/emag_act(mob/user)
+/obj/machinery/computer/cargo/emag_act(mob/user, obj/item/card/emag/emag_card)
 	if(obj_flags & EMAGGED)
-		return
+		return FALSE
 	if(user)
-		user.visible_message(span_warning("[user] swipes a suspicious card through [src]!"),
-		span_notice("You adjust [src]'s routing and receiver spectrum, unlocking special supplies and contraband."))
+		if (emag_card)
+			user.visible_message(span_warning("[user] swipes [emag_card] through [src]!"))
+		to_chat(user, span_notice("You adjust [src]'s routing and receiver spectrum, unlocking special supplies and contraband."))
 
 	obj_flags |= EMAGGED
 	contraband = TRUE
@@ -77,6 +78,7 @@
 	board.contraband = TRUE
 	board.obj_flags |= EMAGGED
 	update_static_data(user)
+	return TRUE
 
 /obj/machinery/computer/cargo/on_construction(mob/user)
 	. = ..()
@@ -150,7 +152,7 @@
 			"cost" = pack.get_cost(),
 			"orderer" = order.orderer,
 			"reason" = order.reason,
-			"id" = order.id
+			"id" = order.id,
 		))
 	data["amount_by_name"] = amount_by_name
 
@@ -175,7 +177,7 @@
 			"id" = pack,
 			"desc" = P.desc || P.name, // If there is a description, use it. Otherwise use the pack's name.
 			"goody" = P.goody,
-			"access" = P.access
+			"access" = P.access,
 		))
 	return data
 
@@ -257,7 +259,15 @@
 				applied_coupon = coupon_check
 				break
 
-		var/datum/supply_order/order = new(pack = pack ,orderer = name, orderer_rank = rank, orderer_ckey = ckey, reason = reason, paying_account = account, coupon = applied_coupon)
+		var/datum/supply_order/order = new(
+			pack = pack ,
+			orderer = name,
+			orderer_rank = rank,
+			orderer_ckey = ckey,
+			reason = reason,
+			paying_account = account,
+			coupon = applied_coupon,
+		)
 		working_list += order
 
 	if(self_paid)
@@ -278,13 +288,14 @@
 			continue
 		if(order.department_destination)
 			say("Only the department that ordered this item may cancel it.")
-			return
+			return FALSE
 		if(order.applied_coupon)
 			say("Coupon refunded.")
 			order.applied_coupon.forceMove(get_turf(src))
 		SSshuttle.shopping_list -= order
-		. = TRUE
-		break
+		qdel(order)
+		return TRUE
+	return FALSE
 /**
  * maps the ordename displayed on the ui to its supply pack id
  * * order_name - the name of the order
