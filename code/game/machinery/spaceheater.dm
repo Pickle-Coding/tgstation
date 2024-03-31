@@ -122,7 +122,7 @@
 			on = FALSE
 		return PROCESS_KILL
 
-	if(!cell || cell.charge <= 1)
+	if(!cell || !cell.charge())
 		on = FALSE
 		update_appearance()
 		return PROCESS_KILL
@@ -149,25 +149,27 @@
 	if(mode == HEATER_MODE_STANDBY)
 		return
 
+	var/list/turfs = (local_turf.atmos_adjacent_turfs || list()) + local_turf
 	var/heat_capacity = enviroment.heat_capacity()
 	var/required_energy = abs(enviroment.temperature - target_temperature) * heat_capacity
-	required_energy = min(required_energy, heating_power)
+	required_energy = min(required_energy, heating_power, cell.charge() * efficiency / length(turfs))
 
-	if(required_energy < 1)
+	if(required_energy <= 0)
 		return
 
-	var/delta_temperature = required_energy / heat_capacity
+	var/delta_energy = required_energy
 	if(mode == HEATER_MODE_COOL)
-		delta_temperature *= -1
+		delta_energy *= -1
 
-	if(delta_temperature == 0)
+	if(delta_energy == 0)
 		return
 
-	for(var/turf/open/turf in ((local_turf.atmos_adjacent_turfs || list()) + local_turf))
+	for(var/turf/open/turf in turfs)
 		var/datum/gas_mixture/turf_gasmix = turf.return_air()
-		turf_gasmix.temperature += delta_temperature
+		turf_gasmix.temperature += delta_energy / turf_gasmix.heat_capacity()
 		air_update_turf(FALSE, FALSE)
-		cell.use(required_energy / efficiency)
+
+	cell.use(required_energy * length(turfs) / efficiency, force = TRUE)
 
 /obj/machinery/space_heater/RefreshParts()
 	. = ..()
