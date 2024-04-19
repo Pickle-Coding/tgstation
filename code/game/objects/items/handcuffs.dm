@@ -93,7 +93,7 @@
 		victim.balloon_alert(user, "already handcuffed!")
 		return
 
-	if(victim.canBeHandcuffed())
+	if(!victim.canBeHandcuffed())
 		victim.balloon_alert(user, "can't be handcuffed!")
 		to_chat(user, span_warning("[victim] doesn't have two hands..."))
 		return
