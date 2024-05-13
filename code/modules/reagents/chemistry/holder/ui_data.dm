@@ -9,7 +9,7 @@
 		ui.open()
 
 
-/datum/reagents/ui_status(mob/user)
+/datum/reagents/ui_status(mob/user, datum/ui_state/state)
 	return UI_INTERACTIVE //please advise
 
 /datum/reagents/ui_state(mob/user)
@@ -171,7 +171,7 @@
 			has_product = FALSE
 			var/list/names = splittext("[reaction.type]", "/")
 			var/product_name = names[names.len]
-			data["reagent_mode_recipe"] = list("name" = product_name, "id" = reaction.type, "hasProduct" = has_product, "reagentCol" = "#FFFFFF", "thermodynamics" = generate_thermodynamic_profile(reaction), "explosive" = generate_explosive_profile(reaction), "lowerpH" = reaction.optimal_ph_min, "upperpH" = reaction.optimal_ph_max, "thermics" = determine_reaction_thermics(reaction), "thermoUpper" = reaction.rate_up_lim, "minPurity" = reaction.purity_min, "inversePurity" = "N/A", "tempMin" = reaction.required_temp, "explodeTemp" = reaction.overheat_temp, "reqContainer" = container_name, "subReactLen" = 1, "subReactIndex" = 1)
+			data["reagent_mode_recipe"] = list("name" = product_name, "id" = reaction.type, "hasProduct" = has_product, "reagentCol" = COLOR_WHITE, "thermodynamics" = generate_thermodynamic_profile(reaction), "explosive" = generate_explosive_profile(reaction), "lowerpH" = reaction.optimal_ph_min, "upperpH" = reaction.optimal_ph_max, "thermics" = determine_reaction_thermics(reaction), "thermoUpper" = reaction.rate_up_lim, "minPurity" = reaction.purity_min, "inversePurity" = "N/A", "tempMin" = reaction.required_temp, "explodeTemp" = reaction.overheat_temp, "reqContainer" = container_name, "subReactLen" = 1, "subReactIndex" = 1)
 
 		//If we do have a product then we find it
 		else
@@ -261,7 +261,6 @@
 	data["bitflags"]["BURN"] = REACTION_TAG_BURN
 	data["bitflags"]["TOXIN"] = REACTION_TAG_TOXIN
 	data["bitflags"]["OXY"] = REACTION_TAG_OXY
-	data["bitflags"]["CLONE"] = REACTION_TAG_CLONE
 	data["bitflags"]["HEALING"] = REACTION_TAG_HEALING
 	data["bitflags"]["DAMAGING"] = REACTION_TAG_DAMAGING
 	data["bitflags"]["EXPLOSIVE"] = REACTION_TAG_EXPLOSIVE
@@ -356,9 +355,6 @@
 			return TRUE
 		if("toggle_tag_oxy")
 			ui_tags_selected = ui_tags_selected ^ REACTION_TAG_OXY
-			return TRUE
-		if("toggle_tag_clone")
-			ui_tags_selected = ui_tags_selected ^ REACTION_TAG_CLONE
 			return TRUE
 		if("toggle_tag_healing")
 			ui_tags_selected = ui_tags_selected ^ REACTION_TAG_HEALING
