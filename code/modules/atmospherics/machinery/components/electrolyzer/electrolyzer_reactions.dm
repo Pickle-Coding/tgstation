@@ -120,7 +120,6 @@ GLOBAL_LIST_INIT(electrolyzer_reactions, electrolyzer_reactions_list())
 	var/list/bz = cached_gases[/datum/gas/bz]
 	var/list/oxygen = cached_gases[/datum/gas/oxygen]
 	var/list/halon = cached_gases[/datum/gas/halon]
-	var/pressure = air_mixture.return_pressure()
 	var/reaction_efficency = min(bz[MOLES] * (1 - NUM_E ** (-0.5 * air_mixture.temperature * working_power / FIRE_MINIMUM_TEMPERATURE_TO_EXIST)), bz[MOLES])
 	bz[MOLES] -= reaction_efficency
 	oxygen[MOLES] += reaction_efficency * 0.2
