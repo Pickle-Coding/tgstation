@@ -46,9 +46,9 @@
 //used by space tiles
 /datum/gas_mixture/immutable/space
 	initial_temperature = TCMB
-	initial_heat_capacity = HEAT_CAPACITY_VACUUM
+	initial_heat_capacity = 0
 
-/datum/gas_mixture/immutable/space/heat_capacity()
+/datum/gas_mixture/immutable/space/felt_heat_capacity()
 	return HEAT_CAPACITY_VACUUM
 
 /datum/gas_mixture/immutable/space/remove()

@@ -117,9 +117,20 @@ GLOBAL_LIST_INIT(gaslist_cache, init_gaslist_cache())
 /datum/gas_mixture/proc/heat_capacity(data = MOLES)
 	return heat_capacity
 
+///Returns the heat capacity of the mixture used for thermal transfer. This can be faked because space feels cold here.
+/datum/gas_mixture/proc/felt_heat_capacity(data = MOLES)
+	return heat_capacity
+
 ///Same as above except vacuums return HEAT_CAPACITY_VACUUM.
-/datum/gas_mixture/turf/heat_capacity(data = MOLES)
+/datum/gas_mixture/turf/felt_heat_capacity(data = MOLES)
 	return heat_capacity ? heat_capacity : HEAT_CAPACITY_VACUUM //We want vacuums in turfs to have the same heat capacity as space.
+
+///Returns the archived heat capacity of the mixture used for thermal transfer. This can be faked because space feels cold here.
+/datum/gas_mixture/proc/felt_heat_capacity_archived(data = MOLES)
+	return heat_capacity_archived
+
+/datum/gas_mixture/turf/felt_heat_capacity_archived(data = MOLES)
+	return heat_capacity_archived ? heat_capacity_archived : HEAT_CAPACITY_VACUUM //We want vacuums in turfs to have the same heat capacity as space.
 
 /// Calculate moles
 /datum/gas_mixture/proc/total_moles()
@@ -178,13 +189,16 @@ GLOBAL_LIST_INIT(gaslist_cache, init_gaslist_cache())
 		return FALSE
 
 	var/self_heat_capacity = heat_capacity
+	var/self_felt_heat_capacity = felt_heat_capacity()
 	var/giver_heat_capacity = giver.heat_capacity
+	var/giver_felt_heat_capacity = giver.felt_heat_capacity()
 	var/combined_heat_capacity = giver_heat_capacity + self_heat_capacity
+	var/combined_felt_heat_capacity = self_felt_heat_capacity + giver_felt_heat_capacity
 
 	//heat transfer
 	if(abs(temperature - giver.temperature) > MINIMUM_TEMPERATURE_DELTA_TO_CONSIDER)
 		if(combined_heat_capacity)
-			temperature = (giver.temperature * giver_heat_capacity + temperature * self_heat_capacity) / combined_heat_capacity
+			temperature = (giver.temperature * giver_felt_heat_capacity + temperature * self_felt_heat_capacity) / combined_felt_heat_capacity
 
 	var/list/cached_gases = gases //accessing datum vars is slower than proc vars
 	var/list/giver_gases = giver.gases
@@ -397,7 +411,9 @@ GLOBAL_LIST_INIT(gaslist_cache, init_gaslist_cache())
 	var/abs_temperature_delta = abs(temperature_delta)
 
 	var/old_self_heat_capacity = heat_capacity
+	var/self_felt_heat_capacity = felt_heat_capacity()
 	var/old_sharer_heat_capacity = sharer.heat_capacity
+	var/sharer_felt_heat_capacity = sharer.felt_heat_capacity()
 
 	var/heat_capacity_self_to_sharer = 0 //heat capacity of the moles transferred from us to the sharer
 	var/heat_capacity_sharer_to_self = 0 //heat capacity of the moles transferred from the sharer to us
@@ -441,25 +457,27 @@ GLOBAL_LIST_INIT(gaslist_cache, init_gaslist_cache())
 
 	last_share = abs_moved_moles
 
-	var/new_self_heat_capacity = old_self_heat_capacity + heat_capacity_sharer_to_self - heat_capacity_self_to_sharer
+	var/new_self_heat_capacity = max(old_self_heat_capacity + heat_capacity_sharer_to_self - heat_capacity_self_to_sharer, 0)
 	var/new_sharer_heat_capacity = old_sharer_heat_capacity + heat_capacity_self_to_sharer - heat_capacity_sharer_to_self
 	heat_capacity = new_self_heat_capacity
 	sharer.heat_capacity = new_sharer_heat_capacity
+	var/new_felt_heat_capacity = felt_heat_capacity()
+	var/new_sharer_felt_heat_capacity = sharer.felt_heat_capacity()
 
 	//THERMAL ENERGY TRANSFER
 	if(abs_temperature_delta > MINIMUM_TEMPERATURE_DELTA_TO_CONSIDER)
 
 		//transfer of thermal energy (via changed heat capacity) between self and sharer
-		if(new_self_heat_capacity > MINIMUM_HEAT_CAPACITY)
-			temperature = (old_self_heat_capacity*temperature - heat_capacity_self_to_sharer*temperature_archived + heat_capacity_sharer_to_self*sharer.temperature_archived)/new_self_heat_capacity
+		if(new_felt_heat_capacity > MINIMUM_HEAT_CAPACITY)
+			temperature = (self_felt_heat_capacity * temperature - heat_capacity_self_to_sharer * temperature_archived + heat_capacity_sharer_to_self * sharer.temperature_archived) / new_felt_heat_capacity
 
-		if(new_sharer_heat_capacity > MINIMUM_HEAT_CAPACITY)
-			sharer.temperature = (old_sharer_heat_capacity*sharer.temperature-heat_capacity_sharer_to_self*sharer.temperature_archived + heat_capacity_self_to_sharer*temperature_archived)/new_sharer_heat_capacity
+		if(new_sharer_felt_heat_capacity > MINIMUM_HEAT_CAPACITY)
+			sharer.temperature = (sharer_felt_heat_capacity * sharer.temperature - heat_capacity_sharer_to_self * sharer.temperature_archived + heat_capacity_self_to_sharer * temperature_archived) / new_sharer_felt_heat_capacity
 		//thermal energy of the system (self and sharer) is unchanged
 
-			if(abs(old_sharer_heat_capacity) > MINIMUM_HEAT_CAPACITY)
-				if(abs(new_sharer_heat_capacity/old_sharer_heat_capacity - 1) < 0.1) // <10% change in sharer heat capacity
-					temperature_share(sharer, OPEN_HEAT_TRANSFER_COEFFICIENT)
+			if(abs(sharer_felt_heat_capacity) > MINIMUM_HEAT_CAPACITY)
+//				if(abs(new_sharer_felt_heat_capacity / sharer_felt_heat_capacity - 1) < 0.1) // <10% change in sharer heat capacity
+				temperature_share(sharer, OPEN_HEAT_TRANSFER_COEFFICIENT)
 
 	if(length(only_in_sharer + only_in_cached)) //if all gases were present in both mixtures, we know that no gases are 0
 		garbage_collect(only_in_cached) //any gases the sharer had, we are guaranteed to have. gases that it didn't have we are not.
@@ -482,8 +500,8 @@ GLOBAL_LIST_INIT(gaslist_cache, init_gaslist_cache())
 		sharer_temperature = sharer.temperature_archived
 	var/temperature_delta = temperature_archived - sharer_temperature
 	if(abs(temperature_delta) > MINIMUM_TEMPERATURE_DELTA_TO_CONSIDER)
-		var/self_heat_capacity = heat_capacity_archived
-		sharer_heat_capacity = sharer_heat_capacity || sharer.heat_capacity_archived
+		var/self_heat_capacity = felt_heat_capacity_archived()
+		sharer_heat_capacity = sharer.felt_heat_capacity_archived()
 
 		if((sharer_heat_capacity > MINIMUM_HEAT_CAPACITY) && (self_heat_capacity > MINIMUM_HEAT_CAPACITY))
 			// coefficient applied first because some turfs have very big heat caps.
