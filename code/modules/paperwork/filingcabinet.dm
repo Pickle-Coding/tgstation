@@ -11,6 +11,7 @@
  * Filing Cabinets
  */
 /obj/structure/filingcabinet
+	SET_BASE_VISUAL_PIXEL(0, DEPTH_OFFSET)
 	name = "filing cabinet"
 	desc = "A large cabinet with drawers."
 	icon = 'icons/obj/service/bureaucracy.dmi'
@@ -104,7 +105,7 @@
 	return ..()
 
 /obj/structure/filingcabinet/attack_self_tk(mob/user)
-	. = COMPONENT_CANCEL_ATTACK_CHAIN
+	. = ITEM_INTERACT_BLOCKING
 	if(contents.len)
 		if(prob(40 + contents.len * 5))
 			var/obj/item/I = pick(contents)
@@ -203,4 +204,3 @@ GLOBAL_LIST_EMPTY(employmentCabinets)
 		fillCurrent()
 		virgin = FALSE
 	return ..()
-

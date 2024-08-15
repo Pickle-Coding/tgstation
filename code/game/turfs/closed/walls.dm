@@ -3,10 +3,10 @@
 /turf/closed/wall
 	name = "wall"
 	desc = "A huge chunk of iron used to separate rooms."
-	icon = 'icons/turf/walls/wall.dmi'
-	icon_state = "wall-0"
-	base_icon_state = "wall"
+	icon = 'icons/turf/walls/metal_wall.dmi'
+	icon_state = "0-2"
 	explosive_resistance = 1
+	rust_resistance = RUST_RESISTANCE_BASIC
 
 	thermal_conductivity = WALL_HEAT_TRANSFER_COEFFICIENT
 	heat_capacity = 62500 //a little over 5 cm thick , 62500 for 1 m by 2.5 m by 0.25 m iron wall. also indicates the temperature at wich the wall will melt (currently only able to melt with H/E pipes)
@@ -16,7 +16,7 @@
 	flags_ricochet = RICOCHET_HARD
 
 	smoothing_flags = SMOOTH_BITMASK
-	smoothing_groups = SMOOTH_GROUP_WALLS + SMOOTH_GROUP_CLOSED_TURFS
+	smoothing_groups = SMOOTH_GROUP_WALLS + SMOOTH_GROUP_TALL_WALLS + SMOOTH_GROUP_CLOSED_TURFS
 	canSmoothWith = SMOOTH_GROUP_WALLS
 
 	rcd_memory = RCD_MEMORY_WALL
@@ -33,8 +33,7 @@
 
 	var/list/dent_decals
 
-/turf/closed/wall/MouseDrop_T(atom/dropping, mob/user, params)
-	..()
+/turf/closed/wall/mouse_drop_receive(atom/dropping, mob/user, params)
 	if(dropping != user)
 		return
 	if(!iscarbon(dropping) && !iscyborg(dropping))
@@ -99,7 +98,7 @@
 	if(is_station_level(z))
 		GLOB.station_turfs += src
 	if(smoothing_flags & SMOOTH_DIAGONAL_CORNERS && fixed_underlay) //Set underlays for the diagonal walls.
-		var/mutable_appearance/underlay_appearance = mutable_appearance(layer = TURF_LAYER, offset_spokesman = src, plane = FLOOR_PLANE)
+		var/mutable_appearance/underlay_appearance = mutable_appearance(layer = LOW_FLOOR_LAYER, offset_spokesman = src, plane = FLOOR_PLANE)
 		if(fixed_underlay["space"])
 			generate_space_underlay(underlay_appearance, src)
 		else
@@ -156,6 +155,9 @@
 	new sheet_type(src, sheet_amount)
 	if(girder_type)
 		new /obj/item/stack/sheet/iron(src)
+
+/turf/attacked_by(obj/item/attacking_item, mob/living/user)
+	return
 
 /turf/closed/wall/ex_act(severity, target)
 	if(target == src)
@@ -252,7 +254,7 @@
 
 	//the istype cascade has been spread among various procs for easy overriding
 	if(try_clean(W, user) || try_wallmount(W, user) || try_decon(W, user))
-		return
+		return TRUE
 
 	return ..()
 
@@ -302,6 +304,9 @@
 
 	return FALSE
 
+/turf/closed/wall/proc/try_damage(obj/item/attacking_item, mob/user, turf/user_turf)
+	return //by default walls dont work like this
+
 /turf/closed/wall/singularity_pull(S, current_size)
 	..()
 	wall_singularity_pull(current_size)
@@ -335,9 +340,9 @@
 	return FALSE
 
 /turf/closed/wall/rcd_act(mob/user, obj/item/construction/rcd/the_rcd, list/rcd_data)
-	switch(rcd_data["[RCD_DESIGN_MODE]"])
+	switch(rcd_data[RCD_DESIGN_MODE])
 		if(RCD_WALLFRAME)
-			var/obj/item/wallframe/wallmount = rcd_data["[RCD_DESIGN_PATH]"]
+			var/obj/item/wallframe/wallmount = rcd_data[RCD_DESIGN_PATH]
 			var/obj/item/wallframe/new_wallmount = new wallmount(user.drop_location())
 			return try_wallmount(new_wallmount, user, src)
 		if(RCD_DECONSTRUCT)
@@ -367,12 +372,11 @@
 
 	add_overlay(dent_decals)
 
-/turf/closed/wall/rust_heretic_act()
+/turf/closed/wall/rust_turf()
 	if(HAS_TRAIT(src, TRAIT_RUSTY))
 		ScrapeAway()
 		return
-	if(prob(70))
-		new /obj/effect/temp_visual/glowing_rune(src)
+
 	return ..()
 
 /turf/closed/wall/metal_foam_base

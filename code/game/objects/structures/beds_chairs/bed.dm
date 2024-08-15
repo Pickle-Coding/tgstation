@@ -8,6 +8,7 @@
 
 /// Beds
 /obj/structure/bed
+	SET_BASE_VISUAL_PIXEL(0, DEPTH_OFFSET)
 	name = "bed"
 	desc = "This is used to lie in, sleep in or strap on."
 	icon_state = "bed"
@@ -270,6 +271,11 @@
 /obj/structure/bed/dogbed/cayenne
 	desc = "Seems kind of... fishy."
 	name = "Cayenne's bed"
+	anchored = TRUE
+
+/obj/structure/bed/dogbed/misha
+	desc = "There is fur all over it, and some blood..."
+	name = "Misha's bed"
 	anchored = TRUE
 
 /obj/structure/bed/dogbed/lia

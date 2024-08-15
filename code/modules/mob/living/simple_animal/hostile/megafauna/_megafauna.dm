@@ -20,6 +20,10 @@
 	maxbodytemp = INFINITY
 	vision_range = 5
 	aggro_vision_range = 18
+	// Pale purple, should be red enough to see stuff on lavaland
+	lighting_cutoff_red = 25
+	lighting_cutoff_green = 15
+	lighting_cutoff_blue = 35
 	move_force = MOVE_FORCE_OVERPOWERING
 	move_resist = MOVE_FORCE_OVERPOWERING
 	pull_force = MOVE_FORCE_OVERPOWERING
@@ -28,6 +32,7 @@
 	mouse_opacity = MOUSE_OPACITY_OPAQUE // Easier to click on in melee, they're giant targets anyway
 	flags_1 = PREVENT_CONTENTS_EXPLOSION_1
 	can_buckle_to = FALSE
+	shadow_type = SHADOW_LARGE // Making an educated guess that they're big
 	/// Crusher loot dropped when the megafauna is killed with a crusher
 	var/list/crusher_loot
 	/// Achievement given to surrounding players when the megafauna is killed

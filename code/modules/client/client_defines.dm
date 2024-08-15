@@ -168,9 +168,9 @@
 	var/middragtime = 0
 	//Middle-mouse-button clicked object control for aimbot exploit detection. Weakref
 	var/datum/weakref/middle_drag_atom_ref
-	//When we started the currently active drag
+	///When we started the currently active drag
 	var/drag_start = 0
-	//The params we were passed at the start of the drag, in list form
+	///The params we were passed at the start of the drag, in list form
 	var/list/drag_details
 
 
@@ -197,6 +197,7 @@
 
 	var/list/parallax_layers
 	var/list/parallax_layers_cached
+	var/atom/movable/screen/parallax_home/parallax_rock
 	///this is the last recorded client eye by SSparallax/fire()
 	var/atom/movable/movingmob
 	var/turf/previous_turf
@@ -206,8 +207,8 @@
 	var/parallax_movedir = 0
 	/// How many parallax layers to show our client
 	var/parallax_layers_max = 4
-	/// Timer for the area directional animation
-	var/parallax_animate_timer
+	/// Timers for the area directional animation, one for each layer
+	var/list/parallax_animate_timers
 	/// Do we want to do parallax animations at all?
 	/// Exists to prevent laptop fires
 	var/do_parallax_animations = TRUE
@@ -267,3 +268,6 @@
 
 	/// Loot panel for the client
 	var/datum/lootpanel/loot_panel
+
+	///Which ambient sound this client is currently being provided.
+	var/current_ambient_sound

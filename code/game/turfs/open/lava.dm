@@ -42,6 +42,7 @@
 	var/fish_source_type = /datum/fish_source/lavaland
 	/// The color we use for our immersion overlay
 	var/immerse_overlay_color = "#a15e1b"
+	rust_resistance = RUST_RESISTANCE_ABSOLUTE
 
 /turf/open/lava/Initialize(mapload)
 	. = ..()
@@ -164,12 +165,9 @@
 	return FALSE
 
 /turf/open/lava/rcd_act(mob/user, obj/item/construction/rcd/the_rcd, list/rcd_data)
-	if(rcd_data["[RCD_DESIGN_MODE]"] == RCD_TURF && rcd_data["[RCD_DESIGN_PATH]"] == /turf/open/floor/plating/rcd)
+	if(rcd_data[RCD_DESIGN_MODE] == RCD_TURF && rcd_data[RCD_DESIGN_PATH] == /turf/open/floor/plating/rcd)
 		place_on_top(/turf/open/floor/plating, flags = CHANGETURF_INHERIT_AIR)
 		return TRUE
-	return FALSE
-
-/turf/open/lava/rust_heretic_act()
 	return FALSE
 
 /turf/open/lava/singularity_act()
@@ -207,8 +205,8 @@
 			to_chat(user, span_warning("You need one rod to build a heatproof lattice."))
 		return
 	// Light a cigarette in the lava
-	if(istype(C, /obj/item/clothing/mask/cigarette))
-		var/obj/item/clothing/mask/cigarette/ciggie = C
+	if(istype(C, /obj/item/cigarette))
+		var/obj/item/cigarette/ciggie = C
 		if(ciggie.lit)
 			to_chat(user, span_warning("The [ciggie.name] is already lit!"))
 			return TRUE

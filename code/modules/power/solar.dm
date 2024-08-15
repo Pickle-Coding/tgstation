@@ -42,6 +42,8 @@
 
 /obj/machinery/power/solar/Destroy()
 	unset_control() //remove from control computer
+	QDEL_NULL(panel)
+	QDEL_NULL(panel_edge)
 	return ..()
 
 /obj/machinery/power/solar/on_changed_z_level(turf/old_turf, turf/new_turf, same_z_layer, notify_contents)
@@ -59,7 +61,7 @@
 /obj/machinery/power/solar/proc/add_panel_overlay(icon_state, z_offset)
 	var/obj/effect/overlay/solar_panel/overlay = new(src)
 	overlay.icon_state = icon_state
-	SET_PLANE_EXPLICIT(overlay, ABOVE_GAME_PLANE, src)
+	SET_PLANE_EXPLICIT(overlay, GAME_PLANE, src)
 	overlay.pixel_z = z_offset
 	vis_contents += overlay
 	return overlay
@@ -365,6 +367,7 @@
 //
 
 /obj/machinery/power/solar_control
+	SET_BASE_VISUAL_PIXEL(0, DEPTH_OFFSET)
 	name = "solar panel control"
 	desc = "A controller for solar panel arrays."
 	icon = 'icons/obj/machines/computer.dmi'

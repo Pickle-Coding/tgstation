@@ -32,6 +32,10 @@
 	if(REF(dinner) in hunter.faction) //Don't eat our friends...
 		return
 
+	var/static/list/slime_faction = list(FACTION_SLIME)
+	if(faction_check(slime_faction, dinner.faction)) //Don't try to eat slimy things, no matter how hungry we are. Anyone else can be betrayed.
+		return
+
 	if(!hunter.can_feed_on(dinner, check_adjacent = FALSE)) //Are they tasty to slimes?
 		return
 
@@ -53,6 +57,10 @@
 /datum/ai_behavior/hunt_target/unarmed_attack_target/slime
 
 /datum/ai_behavior/hunt_target/unarmed_attack_target/slime/target_caught(mob/living/basic/slime/hunter, mob/living/hunted)
+	if (!hunter.can_feed_on(hunted)) // Target is no longer edible
+		hunter.UnarmedAttack(hunted, TRUE)
+		return
+
 	if((hunted.body_position != STANDING_UP) || prob(20)) //Not standing, or we rolled well? Feed.
 		hunter.start_feeding(hunted)
 		return

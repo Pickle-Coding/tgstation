@@ -44,6 +44,7 @@ Difficulty: Extremely Hard
 	death_sound = SFX_BODYFALL
 	footstep_type = FOOTSTEP_MOB_HEAVY
 	summon_line = "I'M WIDE AWAKE! AND YOU'RE WIIIIIIIDE OPEN!"
+	shadow_type = SHADOW_MEDIUM
 	/// If the demonic frost miner is in its enraged state
 	var/enraged = FALSE
 	/// If the demonic frost miner is currently transforming to its enraged state
@@ -261,7 +262,7 @@ Difficulty: Extremely Hard
 	clone.real_name = user.real_name
 	INVOKE_ASYNC(user.dna, TYPE_PROC_REF(/datum/dna, transfer_identity), clone)
 	clone.updateappearance(mutcolor_update=1)
-	var/turf/T = find_safe_turf()
+	var/turf/T = find_maintenance_spawn(atmos_sensitive = TRUE, require_darkness = TRUE) || find_safe_turf()
 	user.forceMove(T)
 	user.revive(ADMIN_HEAL_ALL)
 	INVOKE_ASYNC(user, TYPE_PROC_REF(/mob/living/carbon, set_species), /datum/species/shadow)

@@ -6,7 +6,6 @@
 	icon = 'icons/mob/silicon/aibots.dmi'
 	icon_state = "medibot0"
 	base_icon_state = "medibot"
-	density = FALSE
 	health = 20
 	maxHealth = 20
 	speed = 2
@@ -27,6 +26,7 @@
 	additional_access = /datum/id_trim/job/paramedic
 	announcement_type = /datum/action/cooldown/bot_announcement/medbot
 	path_image_color = "#d9d9f4"
+	shadow_offset_x = 4
 
 	///anouncements when we find a target to heal
 	var/static/list/wait_announcements = list(

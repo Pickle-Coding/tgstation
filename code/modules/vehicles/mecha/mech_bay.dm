@@ -1,4 +1,5 @@
 /obj/machinery/mech_bay_recharge_port
+	SET_BASE_VISUAL_PIXEL(0, DEPTH_OFFSET)
 	name = "mech bay power port"
 	desc = "This port recharges a mech's internal power cell."
 	icon = 'icons/obj/machines/mech_bay.dmi'
@@ -64,10 +65,11 @@
 			recharge_console.update_appearance()
 	if(!recharging_mech?.cell)
 		return
-	if(recharging_mech.cell.charge < recharging_mech.cell.maxcharge)
-		if(!use_energy(active_power_usage * seconds_per_tick, force = FALSE))
-			return
-		charge_cell(recharge_power * seconds_per_tick, recharging_mech.cell, grid_only = TRUE)
+	if(recharging_mech.cell.used_charge())
+		//charge cell, account for heat loss given from work done
+		var/charge_given = charge_cell(recharge_power * seconds_per_tick, recharging_mech.cell, grid_only = TRUE)
+		if(charge_given)
+			use_energy((charge_given + active_power_usage) * 0.01)
 	else
 		recharge_console.update_appearance()
 	if(recharging_mech.loc != recharging_turf)
