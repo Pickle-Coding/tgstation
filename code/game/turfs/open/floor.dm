@@ -367,7 +367,7 @@
 			return TRUE
 	return FALSE
 
-/turf/open/floor/rust_turf()
+/turf/open/floor/rust_turf(datum/element/rust/rust = /datum/element/rust/heretic)
 	if(HAS_TRAIT(src, TRAIT_RUSTY))
 		return
 	ChangeTurf(/turf/open/floor/plating)

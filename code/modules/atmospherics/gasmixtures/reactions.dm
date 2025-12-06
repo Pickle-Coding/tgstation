@@ -1265,10 +1265,10 @@
 	if(prob(100 * (1 - 0.99 ** (antinoblium_moles / 100))) && isturf(holder)) // 1% chance per tick at 100 moles
 		var/turf/location = holder
 		if(!HAS_TRAIT(location, TRAIT_RUSTY))
-			location.rust_turf()
+			location.rust_turf(rust = /datum/element/rust)
 		for(var/direction in GLOB.cardinals)
 			var/turf/turf = get_step(location, direction)
 			if(isclosedturf(turf) && !HAS_TRAIT(turf, TRAIT_RUSTY))
-				turf.rust_turf()
+				turf.rust_turf(rust = /datum/element/rust)
 
 #undef SET_REACTION_RESULTS

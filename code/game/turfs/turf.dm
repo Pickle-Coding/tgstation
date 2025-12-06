@@ -636,11 +636,16 @@ GLOBAL_LIST_EMPTY(station_turfs)
 	rust_turf()
 
 /// Override this to change behaviour when being rusted by a heretic
-/turf/proc/rust_turf()
+/**
+ * Rusts a turf. Override this to change behaviour when being rusted by a heretic
+ * Arguments:
+ * * datum/element/rust/rust - The rust type to use.
+ */
+/turf/proc/rust_turf(datum/element/rust/rust = /datum/element/rust/heretic)
 	if(HAS_TRAIT(src, TRAIT_RUSTY))
 		return
 
-	AddElement(/datum/element/rust/heretic)
+	AddElement(rust)
 	new /obj/effect/glowing_rune(src)
 
 /turf/handle_fall(mob/faller)

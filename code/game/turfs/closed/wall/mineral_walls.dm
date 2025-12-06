@@ -275,7 +275,7 @@
 	custom_materials = list(/datum/material/titanium = SHEET_MATERIAL_AMOUNT*2)
 	rust_resistance = RUST_RESISTANCE_TITANIUM
 
-/turf/closed/wall/mineral/titanium/rust_turf()
+/turf/closed/wall/mineral/titanium/rust_turf(datum/element/rust/rust = /datum/element/rust/heretic)
 	if(HAS_TRAIT(src, TRAIT_RUSTY))
 		ChangeTurf(/turf/closed/wall/rust)
 		return
@@ -321,7 +321,7 @@
 	canSmoothWith = SMOOTH_GROUP_SURVIVAL_TITANIUM_POD
 	rust_resistance = RUST_RESISTANCE_TITANIUM
 
-/turf/closed/wall/mineral/titanium/rust_turf()
+/turf/closed/wall/mineral/titanium/rust_turf(datum/element/rust/rust = /datum/element/rust/heretic)
 	if(HAS_TRAIT(src, TRAIT_RUSTY))
 		ChangeTurf(/turf/closed/wall/rust)
 		return
@@ -344,7 +344,7 @@
 	custom_materials = list(/datum/material/alloy/plastitanium = SHEET_MATERIAL_AMOUNT*2)
 	rust_resistance = RUST_RESISTANCE_TITANIUM
 
-/turf/closed/wall/mineral/plastitanium/rust_turf()
+/turf/closed/wall/mineral/plastitanium/rust_turf(datum/element/rust/rust = /datum/element/rust/heretic)
 	if(HAS_TRAIT(src, TRAIT_RUSTY))
 		ChangeTurf(/turf/closed/wall/rust)
 		return
@@ -361,7 +361,7 @@
 	icon_state = MAP_SWITCH("plastitanium_wall-0", "plastitanium_overspace")
 	fixed_underlay = list("space" = TRUE)
 
-/turf/closed/wall/mineral/plastitanium/rust_turf()
+/turf/closed/wall/mineral/plastitanium/rust_turf(datum/element/rust/rust = /datum/element/rust/heretic)
 	if(HAS_TRAIT(src, TRAIT_RUSTY))
 		ChangeTurf(/turf/closed/wall/rust)
 		return

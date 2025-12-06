@@ -315,7 +315,7 @@
 
 	add_overlay(dent_decals)
 
-/turf/closed/wall/rust_turf()
+/turf/closed/wall/rust_turf(datum/element/rust/rust = /datum/element/rust/heretic)
 	if(HAS_TRAIT(src, TRAIT_RUSTY))
 		ScrapeAway()
 		return
